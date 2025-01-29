@@ -3,14 +3,14 @@ Tensor Compute Primitives
 
 Mid-level intermediate representation for machine learning programs.
 
-[![Bazel Build and Test (mlir-tcp)](https://github.com/cruise-automation/mlir-tcp/actions/workflows/bazelBuildAndTestTcp.yml/badge.svg)](https://github.com/cruise-automation/mlir-tcp/actions/workflows/bazelBuildAndTestTcp.yml)
+[![Bazel Build and Test (mlir-tcp)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestTcp.yml/badge.svg)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestTcp.yml)
 
 :construction: **This project is under active development (WIP).**
 
 ## Project Communication
 
 - For general discussion use `#mlir-tcp` channel on the [LLVM Discord](https://discord.gg/xS7Z362)
-- For feature request or bug report file a detailed [issue on GitHub](https://github.com/cruise-automation/mlir-tcp/issues)
+- For feature request or bug report file a detailed [issue on GitHub](https://github.com/llvm/mlir-tcp/issues)
 
 ## Developer Guide
 
@@ -31,7 +31,7 @@ bazel build //:tcp-opt
 bazel test //...
 ```
 
-We welcome contributions to `mlir-tcp`. When authoring new TCP ops with dialect conversions from/to Torch and Linalg, please include lit tests for dialect and conversions, as well as [aot_compile](https://github.com/cruise-automation/mlir-tcp/blob/main/tools/aot/README.md) generated e2e integration tests. Lastly, please finalize your PR with clang-format, black and bazel buildifier to ensure the C++/python sources and BUILD files are formatted consistently:
+We welcome contributions to `mlir-tcp`. When authoring new TCP ops with dialect conversions from/to Torch and Linalg, please include lit tests for dialect and conversions, as well as [aot_compile](https://github.com/llvm/mlir-tcp/blob/main/tools/aot/README.md) generated e2e integration tests. Lastly, please finalize your PR with clang-format, black and bazel buildifier to ensure the C++/python sources and BUILD files are formatted consistently:
 ```shell
 # clang-format
 find . -type f -name "*.cpp" -o -name "*.h" | xargs clang-format -i
@@ -59,9 +59,9 @@ bazel test @stablehlo//...
 ```
 
 The following CI workflows are automatically triggered anytime upstream dependencies (`deps.bzl`) are updated:
-- [![Bazel Build and Test (llvm-project)](https://github.com/cruise-automation/mlir-tcp/actions/workflows/bazelBuildAndTestLlvm.yml/badge.svg)](https://github.com/cruise-automation/mlir-tcp/actions/workflows/bazelBuildAndTestLlvm.yml)
-- [![Bazel Build and Test (torch-mlir)](https://github.com/cruise-automation/mlir-tcp/actions/workflows/bazelBuildAndTestTorchmlir.yml/badge.svg)](https://github.com/cruise-automation/mlir-tcp/actions/workflows/bazelBuildAndTestTorchmlir.yml)
-- [![Bazel Build and Test (stablehlo)](https://github.com/cruise-automation/mlir-tcp/actions/workflows/bazelBuildAndTestStablehlo.yml/badge.svg)](https://github.com/cruise-automation/mlir-tcp/actions/workflows/bazelBuildAndTestStablehlo.yml)
+- [![Bazel Build and Test (llvm-project)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestLlvm.yml/badge.svg)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestLlvm.yml)
+- [![Bazel Build and Test (torch-mlir)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestTorchmlir.yml/badge.svg)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestTorchmlir.yml)
+- [![Bazel Build and Test (stablehlo)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestStablehlo.yml/badge.svg)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestStablehlo.yml)
 
 To use newer `torch-mlir` and/or `torch` python packages in our hermetic python sandbox, just regenerate `requirements_lock.txt` as follows:
 ```shell
@@ -113,7 +113,7 @@ For help with gdb commands please refer to [gdb cheat sheet](https://gist.github
 
 ### `aot_compile` debugging
 
-Refer this [README](https://github.com/cruise-automation/mlir-tcp/blob/main/tools/aot/README.md) for a step-by-step guide to debugging an end-to-end compilation pipeline using the AOT Compile framework.
+Refer this [README](https://github.com/llvm/mlir-tcp/blob/main/tools/aot/README.md) for a step-by-step guide to debugging an end-to-end compilation pipeline using the AOT Compile framework.
 
 ### Enable `llvm-symbolizer`
 

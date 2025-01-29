@@ -1,7 +1,7 @@
 AOT Compile (Developer Guide)
 =============================
 
-The [`aot_compile`](https://github.com/cruise-automation/mlir-tcp/blob/main/tools/aot/aot_compile.bzl) bazel macro implements an end-to-end framework to compile PyTorch (or TCP) programs to a CPU library, execute it and test for functional correctness of the generated code. It comprises starting with TorchDynamo export of PyTorch programs, conversion and lowerings through {Torch, TCP, Linalg, LLVM} MLIR dialects, translation to LLVM assembly, compilation to assembly source for the host architecture (CPU), and lastly generation of shared object that could be dynamically linked into an executable/test at runtime. It leverages a series of genrules to stitch the compilation pipeline together, and an unsophisticated meta-programming trick for auto-generating C++ tests (specialized to the input program's function signature) that execute the compiled code and validate its numerics against reference PyTorch.
+The [`aot_compile`](https://github.com/llvm/mlir-tcp/blob/main/tools/aot/aot_compile.bzl) bazel macro implements an end-to-end framework to compile PyTorch (or TCP) programs to a CPU library, execute it and test for functional correctness of the generated code. It comprises starting with TorchDynamo export of PyTorch programs, conversion and lowerings through {Torch, TCP, Linalg, LLVM} MLIR dialects, translation to LLVM assembly, compilation to assembly source for the host architecture (CPU), and lastly generation of shared object that could be dynamically linked into an executable/test at runtime. It leverages a series of genrules to stitch the compilation pipeline together, and an unsophisticated meta-programming trick for auto-generating C++ tests (specialized to the input program's function signature) that execute the compiled code and validate its numerics against reference PyTorch.
 
 When authoring new TCP ops with dialect conversions from/to Torch and Linalg, adding an `aot_compile` target is a fast, automated and standardized way to test the e2e compilation and validate that the op lowerings are implemented consistent with PyTorch semantics.
 
@@ -9,7 +9,7 @@ Caveat: The AOT compile framework's primary objective is to serve as an end-to-e
 
 ## Compile PyTorch programs
 
-Onboarding to the `aot_compile` macro is quite easy (examples [here](https://github.com/cruise-automation/mlir-tcp/blob/main/test/AotCompile/BUILD)). Start by adding the following line to the `BUILD` to load the macro:
+Onboarding to the `aot_compile` macro is quite easy (examples [here](https://github.com/llvm/mlir-tcp/blob/main/test/AotCompile/BUILD)). Start by adding the following line to the `BUILD` to load the macro:
 ```starlark
 load("//tools/aot:aot_compile.bzl", "aot_compile")
 ```
@@ -67,7 +67,7 @@ def broadcast_add_mixed_ranks_loader() -> TorchLoaderOutput:
     )
 ```
 
-An invocation of `aot_compile(name="foo", ...)` generates a bunch of targets (see [here](https://github.com/cruise-automation/mlir-tcp/blob/main/tools/aot/aot_compile.bzl#L43) for the list) that can be helpful in debugging the intermediate steps in the compilation process.
+An invocation of `aot_compile(name="foo", ...)` generates a bunch of targets (see [here](https://github.com/llvm/mlir-tcp/blob/main/tools/aot/aot_compile.bzl#L43) for the list) that can be helpful in debugging the intermediate steps in the compilation process.
 
 To get the full list of `aot_compile` macro generated targets for `broadcast_add_mixed_ranks`, run the query:
 ```shell
@@ -500,6 +500,6 @@ $ bazel query 'attr(name, "basic_tcp_ops", //test/AotCompile/...)'
 //test/AotCompile:gen_basic_tcp_ops_mlir_llvm
 ```
 
-Note we're missing the `//test/AotCompile:basic_tcp_ops_compile_execute_test` target. As there is no access to PyTorch reference implementation, the `aot_compile` macro does not auto-generate C++ execute tests but they can be manually written (example [here](https://github.com/cruise-automation/mlir-tcp/blob/main/test/AotCompile/test_aot_compiled_basic_tcp_ops.cpp)). These tests should include `extern "C"` function declarations with the same name and for every function in the input TCP source.
+Note we're missing the `//test/AotCompile:basic_tcp_ops_compile_execute_test` target. As there is no access to PyTorch reference implementation, the `aot_compile` macro does not auto-generate C++ execute tests but they can be manually written (example [here](https://github.com/llvm/mlir-tcp/blob/main/test/AotCompile/test_aot_compiled_basic_tcp_ops.cpp)). These tests should include `extern "C"` function declarations with the same name and for every function in the input TCP source.
 
 The rest of the steps to debug the e2e compilation pipeline are pretty much the same.
