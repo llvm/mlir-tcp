@@ -21,6 +21,7 @@
 #include "mlir/Conversion/AffineToStandard/AffineToStandard.h"
 #include "mlir/Conversion/ArithToLLVM/ArithToLLVM.h"
 #include "mlir/Conversion/BufferizationToMemRef/BufferizationToMemRef.h"
+#include "mlir/Conversion/ControlFlowToLLVM/ControlFlowToLLVM.h"
 #include "mlir/Conversion/FuncToLLVM/ConvertFuncToLLVMPass.h"
 #include "mlir/Conversion/MathToLLVM/MathToLLVM.h"
 #include "mlir/Conversion/MathToLibm/MathToLibm.h"
@@ -84,8 +85,6 @@ static void createTcpToLlvmPipeline(OpPassManager &pm) {
   bufferizationOptions.setFunctionBoundaryTypeConversion(
       bufferization::LayoutMapOption::IdentityLayoutMap);
   pm.addPass(bufferization::createOneShotBufferizePass(bufferizationOptions));
-  pm.addNestedPass<func::FuncOp>(
-      bufferization::createFinalizingBufferizePass());
   // Buffer deallocation pipeline for automatically inserting
   // buffer deallocation ops after one-shot bufferization.
   // https://sourcegraph.com/github.com/llvm/llvm-project@09bc1e825068f314db71ee7eb32d9f93c5ac87a0/-/blob/mlir/lib/Dialect/Bufferization/Pipelines/BufferizationPipelines.cpp?L21
@@ -122,6 +121,8 @@ static void createTcpToLlvmPipeline(OpPassManager &pm) {
   pm.addPass(createFinalizeMemRefToLLVMConversionPass());
   // Convert Func to LLVM (always needed).
   pm.addPass(createConvertFuncToLLVMPass());
+  // Convert CF to LLVM (always needed).
+  pm.addPass(createConvertControlFlowToLLVMPass());
 
   // Sprinkle some cleanups.
   pm.addPass(createCanonicalizerPass());
