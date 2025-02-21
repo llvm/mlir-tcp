@@ -4,7 +4,7 @@
 # Also available under a BSD-style license. See LICENSE.
 
 ARG BASE_IMG=ubuntu:22.04
-FROM ${BASE_IMG} as dev-base
+FROM ${BASE_IMG} AS dev-base
 
 # Specify user IDs
 ARG GROUP
@@ -23,8 +23,7 @@ RUN apt-get update && \
     clang \
     clang-format \
     gdb \
-    black \
-    sudo
+    black
 
 # Install bazel
 ARG ARCH="x86_64"
@@ -43,8 +42,7 @@ WORKDIR /opt/src/mlir-tcp
 RUN groupadd -o -g ${GID} ${GROUP} && \
     useradd -u ${UID} -g ${GROUP} -ms /bin/bash ${USER} && \
     usermod -aG sudo ${USER} && \
-    chown -R ${USER}:${GROUP} /opt/src/mlir-tcp && \
-    echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    chown -R ${USER}:${GROUP} /opt/src/mlir-tcp
 
 # Switch to user
 USER ${USER}
