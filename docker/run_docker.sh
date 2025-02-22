@@ -10,5 +10,5 @@ docker build -f docker/Dockerfile \
 
 docker run -it \
            -v "$(pwd)":"/opt/src/mlir-tcp" \
-           -v "${HOME}/.cache/bazel":"${HOME}/.cache/bazel" \
+           -v "${HOME}/.cache":"${HOME}/.cache" \
            mlir-tcp:dev
