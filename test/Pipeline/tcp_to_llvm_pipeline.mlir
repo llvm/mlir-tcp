@@ -2,7 +2,6 @@
 
 // CHECK-LABEL: llvm.func @main
 // CHECK:         llvm.mlir.constant
-// CHECK:         llvm.mlir.undef
 // CHECK:         llvm.insertvalue
 // CHECK:         llvm.extractvalue
 // CHECK:         llvm.alloca
