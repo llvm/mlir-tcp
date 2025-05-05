@@ -168,7 +168,7 @@ def third_party_deps():
         strip_prefix = "cnpy-4e8810b1a8637695171ed346ce68f6984e585ef4",
         urls = ["https://github.com/rogersce/cnpy/archive/4e8810b1a8637695171ed346ce68f6984e585ef4.tar.gz"],
     )
-    
+
     http_archive(
         name = "nanobind",
         build_file = "@llvm-raw//utils/bazel/third_party_build:nanobind.BUILD",
