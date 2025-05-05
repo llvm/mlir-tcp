@@ -80,10 +80,10 @@ static void createTcpToLlvmPipeline(OpPassManager &pm) {
 
   // One-shot bufferize tensor -> memref, from
   // https://mlir.llvm.org/docs/Bufferization/.
-  bufferization::OneShotBufferizationOptions bufferizationOptions;
+  bufferization::OneShotBufferizePassOptions bufferizationOptions;
   bufferizationOptions.bufferizeFunctionBoundaries = true;
-  bufferizationOptions.setFunctionBoundaryTypeConversion(
-      bufferization::LayoutMapOption::IdentityLayoutMap);
+  bufferizationOptions.functionBoundaryTypeConversion =
+      bufferization::LayoutMapOption::IdentityLayoutMap;
   pm.addPass(bufferization::createOneShotBufferizePass(bufferizationOptions));
   // Buffer deallocation pipeline for automatically inserting
   // buffer deallocation ops after one-shot bufferization.
@@ -95,14 +95,14 @@ static void createTcpToLlvmPipeline(OpPassManager &pm) {
   pm.addPass(bufferization::createLowerDeallocationsPass());
   pm.addPass(createCSEPass());
   pm.addPass(createCanonicalizerPass());
-  pm.addPass(createBufferizationToMemRefPass());
+  pm.addPass(createConvertBufferizationToMemRefPass());
 
   // Blanket-convert any remaining linalg ops to loops if any remain.
   pm.addNestedPass<func::FuncOp>(createConvertLinalgToLoopsPass());
   // Blanket-convert any remaining affine ops if any remain.
   pm.addPass(createLowerAffinePass());
   // Convert SCF to CF (always needed).
-  pm.addPass(createConvertSCFToCFPass());
+  pm.addPass(createSCFToControlFlowPass());
 
   // Sprinkle some cleanups.
   pm.addPass(createCanonicalizerPass());

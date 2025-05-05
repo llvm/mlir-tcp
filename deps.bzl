@@ -22,8 +22,8 @@ def third_party_deps():
             path = local_llvm_repo_path(),
         )
     else:
-        LLVM_COMMIT = "5d6d982df61d16b6d498e6d59dd91c059679d3d8"
-        LLVM_SHA256 = "834184126812eecbdb2ed30de255554a6529295afaf44e9dfd3851d61195dbb5"
+        LLVM_COMMIT = "72144d119a7291f8b6b8e022a2947fbe31e66afc"
+        LLVM_SHA256 = "2caacb6925a13cb5886a5d7f225fa408b80ca8e1efe0736186954b2abc4ee1c3"
         http_archive(
             name = "llvm-raw",
             build_file_content = "# empty",
@@ -39,8 +39,8 @@ def third_party_deps():
             path = local_torch_mlir_repo_path(),
         )
     else:
-        TORCH_MLIR_COMMIT = "169032010793ee7fe3e305ab920e4119fdfc3b11"
-        TORCH_MLIR_SHA256 = "0f25459b0d6828983c8aa78d139adad4325508bff150b57e97345e9798377dd3"
+        TORCH_MLIR_COMMIT = "9f2ba5abaa85cefd95cc85579fafd0c53c1101e8"
+        TORCH_MLIR_SHA256 = "09444281839eeae4aff42c029d87b1728f307fa26511b896ff448d51aaa98049"
         http_archive(
             name = "torch-mlir-raw",
             build_file_content = "# empty",
@@ -55,8 +55,8 @@ def third_party_deps():
             path = local_stablehlo_repo_path(),
         )
     else:
-        STABLEHLO_COMMIT = "b62dc66da9946b4c400c0d99c9d5bb8e04edaee6"
-        STABLEHLO_SHA256 = "a51842f5cbcccc2dc74de232793e6fdc0b4403b616281a73bbc704cd227b50db"
+        STABLEHLO_COMMIT = "a54938f0651d3b4b7be9771848eda2463c92a8e7"
+        STABLEHLO_SHA256 = "edab2288f0b19e3efbf08815d17d4efb106984aa6fe02fed0cb2165284e6a5b7"
         http_archive(
             name = "stablehlo",
             sha256 = STABLEHLO_SHA256,
@@ -167,4 +167,20 @@ def third_party_deps():
         sha256 = "5120abc54a564efa92c642cc0199cc4fd3f345901157de9fbbdcedbb34d28d8a",
         strip_prefix = "cnpy-4e8810b1a8637695171ed346ce68f6984e585ef4",
         urls = ["https://github.com/rogersce/cnpy/archive/4e8810b1a8637695171ed346ce68f6984e585ef4.tar.gz"],
+    )
+    
+    http_archive(
+        name = "nanobind",
+        build_file = "@llvm-raw//utils/bazel/third_party_build:nanobind.BUILD",
+        sha256 = "bb35deaed7efac5029ed1e33880a415638352f757d49207a8e6013fefb6c49a7",
+        strip_prefix = "nanobind-2.4.0",
+        url = "https://github.com/wjakob/nanobind/archive/refs/tags/v2.4.0.tar.gz",
+    )
+
+    http_archive(
+        name = "robin_map",
+        build_file = "@llvm-raw//utils/bazel/third_party_build:robin_map.BUILD",
+        sha256 = "a8424ad3b0affd4c57ed26f0f3d8a29604f0e1f2ef2089f497f614b1c94c7236",
+        strip_prefix = "robin-map-1.3.0",
+        url = "https://github.com/Tessil/robin-map/archive/refs/tags/v1.3.0.tar.gz",
     )
