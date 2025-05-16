@@ -58,7 +58,9 @@ jobs:
           echo "Please run 'find . -type f -name "*.cpp" -o -name "*.h" | xargs clang-format -i' and commit changes."
           echo "git reports the following changes: "
           echo "$(git status --porcelain)"
-          echo "clang-format version: $(clang-format --version)"
+          echo "$(git diff -u)"
+          docker run --rm mlir-tcp:ci clang-format --version
+          docker run --rm mlir-tcp:ci uname -a
           exit 1
         fi
 
