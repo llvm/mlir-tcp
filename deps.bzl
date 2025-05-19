@@ -49,7 +49,7 @@ def third_party_deps():
             urls = ["https://github.com/llvm/torch-mlir/archive/{commit}.tar.gz".format(commit = TORCH_MLIR_COMMIT)],
             patches = [
                 "//third_party/patches:torch-mlir.1.patch",
-            ]
+            ],
         )
 
     if use_local_stablehlo_repo():
