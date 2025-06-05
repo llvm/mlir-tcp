@@ -26,20 +26,20 @@ def run(f):
 # CHECK-SAME:       %[[ARG0:[a-zA-Z0-9]+]]: !torch.vtensor<[?,?,3],f32>,
 # CHECK-SAME:       %[[ARG1:[a-zA-Z0-9]+]]: !torch.vtensor<[?,?,3],f32>,
 # CHECK-SAME:       %[[ARG2:[a-zA-Z0-9]+]]: !torch.vtensor<[?,?,3],f32>) -> !torch.vtensor<[?,?,3],f32> {
-# CHECK:        %[[S0:.+]] = torch.symbolic_int "s0" {min_val = 5, max_val = 10} : !torch.int
-# CHECK:        %[[S1:.+]] = torch.symbolic_int "s1" {min_val = {{[0-9]+}}, max_val = 100} : !torch.int
-# CHECK:        %[[S2:.+]] = torch.symbolic_int "s3" {min_val = {{[0-9]+}}, max_val = 50} : !torch.int
-# CHECK:        %[[S3:.+]] = torch.symbolic_int "s5" {min_val = {{[0-9]+}}, max_val = {{[0-9]+}}} : !torch.int
-# CHECK:        torch.bind_symbolic_shape %[[ARG0]], [%[[S0]], %[[S1]]], affine_map<()[s0, s1] -> (s0, s1, 3)> : !torch.vtensor<[?,?,3],f32>
+# CHECK:        %[[S0:.+]] = torch.symbolic_int "s{{[0-9]+}}" {min_val = 5, max_val = 10} : !torch.int
+# CHECK:        %[[S1:.+]] = torch.symbolic_int "s{{[0-9]+}}" {min_val = {{[0-9]+}}, max_val = 100} : !torch.int
+# CHECK:        %[[S2:.+]] = torch.symbolic_int "s{{[0-9]+}}" {min_val = {{[0-9]+}}, max_val = 50} : !torch.int
+# CHECK:        %[[S3:.+]] = torch.symbolic_int "s{{[0-9]+}}" {min_val = {{[0-9]+}}, max_val = {{[0-9]+}}} : !torch.int
+# CHECK:        torch.bind_symbolic_shape %[[ARG0]], [%[[S1]], %[[S0]]], affine_map<()[s0, s1] -> (s1, s0, 3)> : !torch.vtensor<[?,?,3],f32>
 # CHECK:        torch.bind_symbolic_shape %[[ARG1]], [%[[S0]], %[[S2]]], affine_map<()[s0, s1] -> (s0, s1, 3)> : !torch.vtensor<[?,?,3],f32>
-# CHECK:        torch.bind_symbolic_shape %[[ARG2]], [%[[S0]], %[[S3]]], affine_map<()[s0, s1] -> (s0, s1, 3)> : !torch.vtensor<[?,?,3],f32>
+# CHECK:        torch.bind_symbolic_shape %[[ARG2]], [%[[S3]], %[[S0]]], affine_map<()[s0, s1] -> (s1, s0, 3)> : !torch.vtensor<[?,?,3],f32>
 # CHECK:        %[[TANH:.+]] = torch.aten.tanh %[[ARG0]] : !torch.vtensor<[?,?,3],f32> -> !torch.vtensor<[?,?,3],f32>
-# CHECK:        torch.bind_symbolic_shape %[[TANH]], [%[[S0]], %[[S1]]], affine_map<()[s0, s1] -> (s0, s1, 3)> : !torch.vtensor<[?,?,3],f32>
+# CHECK:        torch.bind_symbolic_shape %[[TANH]], [%[[S1]], %[[S0]]], affine_map<()[s0, s1] -> (s1, s0, 3)> : !torch.vtensor<[?,?,3],f32>
 # CHECK:        %[[SIG:.+]] = torch.aten.sigmoid %[[ARG1]] : !torch.vtensor<[?,?,3],f32> -> !torch.vtensor<[?,?,3],f32>
 # CHECK:        torch.bind_symbolic_shape %[[SIG]], [%[[S0]], %[[S2]]], affine_map<()[s0, s1] -> (s0, s1, 3)> : !torch.vtensor<[?,?,3],f32>
 # CHECK:        %[[LIST:.+]] = torch.prim.ListConstruct %[[TANH]], %[[TANH]], %[[SIG]], %[[ARG2]] : (!torch.vtensor<[?,?,3],f32>, !torch.vtensor<[?,?,3],f32>, !torch.vtensor<[?,?,3],f32>, !torch.vtensor<[?,?,3],f32>) -> !torch.list<vtensor>
 # CHECK:        %[[CAT:.+]] = torch.aten.cat %[[LIST]], {{.*}} : !torch.list<vtensor>, !torch.int -> !torch.vtensor<[?,?,3],f32>
-# CHECK:        torch.bind_symbolic_shape %[[CAT]], [%[[S0]], %[[S1]], %[[S2]], %[[S3]]], affine_map<()[s0, s1, s2, s3] -> (s0, s2 + s3 + s1 * 2, 3)> : !torch.vtensor<[?,?,3],f32>
+# CHECK:        torch.bind_symbolic_shape %[[CAT]], [%[[S1]], %[[S3]], %[[S0]], %[[S2]]], affine_map<()[s0, s1, s2, s3] -> (s2, s1 + s3 + s0 * 2, 3)> : !torch.vtensor<[?,?,3],f32>
 # CHECK:        return %[[CAT]] : !torch.vtensor<[?,?,3],f32>
 def test_tanh_sigmoid_cat():
     class TanhSigmoidCat(nn.Module):
