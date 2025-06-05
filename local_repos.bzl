@@ -21,16 +21,8 @@ def use_local_torch_mlir_repo():
     # `local_torch_mlir_repo_path()`
     return False
 
-def use_local_stablehlo_repo():
-    # Change this to return True to have mlir-tcp use the source tree at
-    # `local_stablehlo_repo_path()`
-    return False
-
 def local_llvm_repo_path():
     return "./third_party/llvm-project"
 
 def local_torch_mlir_repo_path():
     return "./third_party/torch-mlir"
-
-def local_stablehlo_repo_path():
-    return "./third_party/stablehlo"

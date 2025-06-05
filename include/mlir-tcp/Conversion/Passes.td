@@ -47,23 +47,6 @@ def ConvertTorchToTcpCustomOp : Pass<"convert-torch-to-tcp-custom-op", "func::Fu
 }
 
 //===----------------------------------------------------------------------===//
-// StablehloToTcp
-//===----------------------------------------------------------------------===//
-
-def ConvertStablehloToTcp
-      : Pass<"convert-stablehlo-to-tcp", "func::FuncOp"> {
-  let summary = "Lower StableHLO to TCP";
-  let description = [{
-    Pass that converts StableHLO operations to equivalent operations in TCP.
-  }];
-
-  let constructor = "mlir::tcp::createConvertStablehloToTcpPass()";
-  let dependentDialects = [
-    "mlir::tcp::TcpDialect",
-  ];
-}
-
-//===----------------------------------------------------------------------===//
 // TcpToLinalg
 //===----------------------------------------------------------------------===//
 

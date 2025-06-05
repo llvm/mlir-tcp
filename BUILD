@@ -198,7 +198,6 @@ cc_library(
     hdrs = ["include/mlir-tcp/Conversion/Passes.h"],
     strip_include_prefix = "include",
     deps = [
-        ":StablehloToTcp",
         ":TcpToArith",
         ":TcpToLinalg",
         ":TcpToTensor",
@@ -234,25 +233,6 @@ cc_library(
         "@torch-mlir//:TorchMLIRTorchConversionDialect",
         "@torch-mlir//:TorchMLIRTorchPasses",
         "@torch-mlir//:TorchMLIRTorchToLinalg",
-    ],
-)
-
-cc_library(
-    name = "StablehloToTcp",
-    srcs = [
-        "lib/Conversion/PassDetail.h",
-        "lib/Conversion/StablehloToTcp/StablehloToTcp.cpp",
-    ],
-    hdrs = ["include/mlir-tcp/Conversion/StablehloToTcp/StablehloToTcp.h"],
-    strip_include_prefix = "include",
-    deps = [
-        ":TcpConversionPassesIncGen",
-        ":TcpDialect",
-        "@llvm-project//mlir:Dialect",
-        "@llvm-project//mlir:LinalgDialect",
-        "@llvm-project//mlir:Pass",
-        "@llvm-project//mlir:Transforms",
-        "@stablehlo//:stablehlo_ops",
     ],
 )
 
@@ -364,6 +344,5 @@ cc_binary(
         "@llvm-project//mlir:AllPassesAndDialects",
         "@llvm-project//mlir:MlirOptLib",
         "@llvm-project//mlir:QuantOps",
-        "@stablehlo//:register",
     ],
 )

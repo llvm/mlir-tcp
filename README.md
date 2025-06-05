@@ -51,17 +51,15 @@ bazel run //tools/clangd:refresh_compile_commands
 ```
 When run successfully, a `compile_commands.json` is generated at the workspace root (and refreshed upon re-runs). If you're using VSCode, just hit CMD+SHIFT+P and select `clangd: Restart language server` to start clangd. Note that this only works for non-docker builds at the moment.
 
-When bumping upstream dependencies (LLVM, Torch-MLIR, StableHLO), you may validate the set of "green commits" by running the corresponding third-party tests:
+When bumping upstream dependencies (LLVM, Torch-MLIR), you may validate the set of "green commits" by running the corresponding third-party tests:
 ```shell
 bazel test @llvm-project//mlir/...
 bazel test @torch-mlir//...
-bazel test @stablehlo//...
 ```
 
 The following CI workflows are automatically triggered anytime upstream dependencies (`deps.bzl`) are updated:
 - [![Bazel Build and Test (llvm-project)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestLlvm.yml/badge.svg)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestLlvm.yml)
 - [![Bazel Build and Test (torch-mlir)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestTorchmlir.yml/badge.svg)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestTorchmlir.yml)
-- [![Bazel Build and Test (stablehlo)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestStablehlo.yml/badge.svg)](https://github.com/llvm/mlir-tcp/actions/workflows/bazelBuildAndTestStablehlo.yml)
 
 To use newer `torch-mlir` and/or `torch` python packages in our hermetic python sandbox, just regenerate `requirements_lock.txt` as follows:
 ```shell

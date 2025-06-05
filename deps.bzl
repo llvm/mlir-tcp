@@ -7,10 +7,8 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load(
     ":local_repos.bzl",
     "local_llvm_repo_path",
-    "local_stablehlo_repo_path",
     "local_torch_mlir_repo_path",
     "use_local_llvm_repo",
-    "use_local_stablehlo_repo",
     "use_local_torch_mlir_repo",
 )
 
@@ -44,27 +42,13 @@ def third_party_deps():
         http_archive(
             name = "torch-mlir-raw",
             build_file_content = "# empty",
+            patches = ["//third_party/patches:torch-mlir-bazel.1.patch"],
             sha256 = TORCH_MLIR_SHA256,
             strip_prefix = "torch-mlir-" + TORCH_MLIR_COMMIT,
             urls = ["https://github.com/llvm/torch-mlir/archive/{commit}.tar.gz".format(commit = TORCH_MLIR_COMMIT)],
             patches = [
                 "//third_party/patches:torch-mlir.1.patch",
             ],
-        )
-
-    if use_local_stablehlo_repo():
-        native.local_repository(
-            name = "stablehlo",
-            path = local_stablehlo_repo_path(),
-        )
-    else:
-        STABLEHLO_COMMIT = "a54938f0651d3b4b7be9771848eda2463c92a8e7"
-        STABLEHLO_SHA256 = "edab2288f0b19e3efbf08815d17d4efb106984aa6fe02fed0cb2165284e6a5b7"
-        http_archive(
-            name = "stablehlo",
-            sha256 = STABLEHLO_SHA256,
-            strip_prefix = "stablehlo-" + STABLEHLO_COMMIT,
-            urls = ["https://github.com/openxla/stablehlo/archive/{commit}.tar.gz".format(commit = STABLEHLO_COMMIT)],
         )
 
     SKYLIB_VERSION = "1.3.0"
