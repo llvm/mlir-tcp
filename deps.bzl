@@ -42,13 +42,10 @@ def third_party_deps():
         http_archive(
             name = "torch-mlir-raw",
             build_file_content = "# empty",
-            patches = ["//third_party/patches:torch-mlir-bazel.1.patch"],
+            patches = ["//third_party/patches:torch-mlir-bazel-build.1.patch"],
             sha256 = TORCH_MLIR_SHA256,
             strip_prefix = "torch-mlir-" + TORCH_MLIR_COMMIT,
             urls = ["https://github.com/llvm/torch-mlir/archive/{commit}.tar.gz".format(commit = TORCH_MLIR_COMMIT)],
-            patches = [
-                "//third_party/patches:torch-mlir.1.patch",
-            ],
         )
 
     SKYLIB_VERSION = "1.3.0"
