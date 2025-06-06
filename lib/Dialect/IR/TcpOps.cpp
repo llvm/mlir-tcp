@@ -21,9 +21,9 @@
 namespace mlir::tcp {
 
 LogicalResult ClampOp::verify() {
-  auto inputType = getIn().getType().cast<RankedTensorType>();
+  auto inputType = cast<RankedTensorType>(getIn().getType());
 
-  if (inputType.getElementType().isa<FloatType>()) {
+  if (isa<FloatType>(inputType.getElementType())) {
     if (getMinInt() || getMaxInt())
       return emitOpError("failed to verify that int min / max attributes "
                          "must not be set when input is a float tensor");
@@ -32,7 +32,7 @@ LogicalResult ClampOp::verify() {
                          "attributes must be set");
   }
 
-  if (inputType.getElementType().isa<IntegerType>()) {
+  if (isa<IntegerType>(inputType.getElementType())) {
     if (getMinFloat() || getMaxFloat())
       return emitOpError("failed to verify that float min / max attributes "
                          "must not be set when input is an int tensor");
@@ -46,7 +46,7 @@ LogicalResult ClampOp::verify() {
 
 LogicalResult BroadcastOp::verify() {
   auto compareIntAttr = [](Attribute v1, Attribute v2) {
-    return v1.cast<IntegerAttr>().getInt() < v2.cast<IntegerAttr>().getInt();
+    return cast<IntegerAttr>(v1).getInt() < cast<IntegerAttr>(v2).getInt();
   };
 
   auto getInt = [](IntegerAttr v) { return v.getInt(); };
@@ -134,20 +134,20 @@ LogicalResult ConstOp::verify() {
 }
 
 LogicalResult CastOp::verify() {
-  auto inputType = getIn().getType().cast<RankedTensorType>();
-  auto outputType = getOut().getType().cast<RankedTensorType>();
+  auto inputType = cast<RankedTensorType>(getIn().getType());
+  auto outputType = cast<RankedTensorType>(getOut().getType());
 
   if (!inputType.getElementType().isIntOrFloat() ||
       !outputType.getElementType().isIntOrFloat())
     return emitOpError("Cast Op must have integer or floating-point datatype");
 
-  if (inputType.getElementType().isa<FloatType>()) {
+  if (isa<FloatType>(inputType.getElementType())) {
     if (getInIntSignedness())
       return emitOpError(
           "in_int_signedness attr should not set when input is FP");
   }
 
-  if (inputType.getElementType().isa<IntegerType>()) {
+  if (isa<IntegerType>(inputType.getElementType())) {
     if (!getInIntSignedness())
       return emitOpError(
           "in_int_signedness attr must be set when input is INT");
@@ -157,13 +157,13 @@ LogicalResult CastOp::verify() {
                          "Signedness::Signless when input is i1");
   }
 
-  if (outputType.getElementType().isa<FloatType>()) {
+  if (isa<FloatType>(outputType.getElementType())) {
     if (getOutIntSignedness())
       return emitOpError(
           "out_int_signedness attr should not set when output is FP");
   }
 
-  if (outputType.getElementType().isa<IntegerType>()) {
+  if (isa<IntegerType>(outputType.getElementType())) {
     if (!getOutIntSignedness())
       return emitOpError(
           "out_int_signedness attr must be set when output is INT");
