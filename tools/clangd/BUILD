@@ -12,7 +12,6 @@ refresh_compile_commands(
     #   bazel query 'kind("(cc.*) rule", //...)'
     targets = [
         "//:Pipeline",
-        "//:StablehloToTcp",
         "//:TcpConversionPasses",
         "//:TcpConversionPassesIncGen",
         "//:TcpDialect",

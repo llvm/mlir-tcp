@@ -1,0 +1,129 @@
+diff --git utils/bazel/torch-mlir-overlay/BUILD.bazel utils/bazel/torch-mlir-overlay/BUILD.bazel
+index fdde0d63..6611d78b 100644
+--- utils/bazel/torch-mlir-overlay/BUILD.bazel
++++ utils/bazel/torch-mlir-overlay/BUILD.bazel
+@@ -277,7 +277,7 @@ gentbl_cc_library(
+         (
+             [
+                 "-gen-pass-decls",
+-                "-DTORCH_MLIR_ENABLE_STABLEHLO",
++                # "-DTORCH_MLIR_ENABLE_STABLEHLO",
+                 "-DTORCH_MLIR_ENABLE_TOSA",
+             ],
+             "include/torch-mlir/Conversion/Passes.h.inc",
+@@ -334,7 +334,7 @@ gentbl_cc_library(
+         (
+             [
+                 "-gen-pass-decls",
+-                "-DTORCH_MLIR_ENABLE_STABLEHLO",
++                # "-DTORCH_MLIR_ENABLE_STABLEHLO",
+                 "-DTORCH_MLIR_ENABLE_TOSA",
+             ],
+             "include/torch-mlir/Dialect/TorchConversion/Transforms/Passes.h.inc",
+@@ -495,28 +495,28 @@ cc_library(
+     ],
+ )
+ 
+-cc_library(
+-    name = "TorchMLIRTorchToStablehlo",
+-    srcs = glob([
+-        "lib/Conversion/*.h",
+-        "lib/Conversion/TorchToStablehlo/*.h",
+-        "lib/Conversion/TorchToStablehlo/*.cpp",
+-    ]),
+-    hdrs = glob(["include/torch-mlir/Conversion/TorchToStablehlo/*.h"]),
+-    defines = [
+-        "TORCH_MLIR_ENABLE_STABLEHLO",
+-    ],
+-    strip_include_prefix = "include",
+-    deps = [
+-        ":TorchMLIRConversionPassesIncGen",
+-        ":TorchMLIRConversionUtils",
+-        ":TorchMLIRTorchBackendTypeConversion",
+-        ":TorchMLIRTorchConversionDialect",
+-        "@llvm-project//mlir:Dialect",
+-        "@stablehlo//:register",
+-        "@stablehlo//:stablehlo_passes",
+-    ],
+-)
++# cc_library(
++#     name = "TorchMLIRTorchToStablehlo",
++#     srcs = glob([
++#         "lib/Conversion/*.h",
++#         "lib/Conversion/TorchToStablehlo/*.h",
++#         "lib/Conversion/TorchToStablehlo/*.cpp",
++#     ]),
++#     hdrs = glob(["include/torch-mlir/Conversion/TorchToStablehlo/*.h"]),
++#     defines = [
++#         "TORCH_MLIR_ENABLE_STABLEHLO",
++#     ],
++#     strip_include_prefix = "include",
++#     deps = [
++#         ":TorchMLIRConversionPassesIncGen",
++#         ":TorchMLIRConversionUtils",
++#         ":TorchMLIRTorchBackendTypeConversion",
++#         ":TorchMLIRTorchConversionDialect",
++#         "@llvm-project//mlir:Dialect",
++#         "@stablehlo//:register",
++#         "@stablehlo//:stablehlo_passes",
++#     ],
++# )
+ 
+ cc_library(
+     name = "TorchMLIRTorchOnnxToTorch",
+@@ -543,7 +543,7 @@ cc_library(
+         "include/torch-mlir/Conversion/Passes.h",
+     ],
+     defines = [
+-        "TORCH_MLIR_ENABLE_STABLEHLO",
++        # "TORCH_MLIR_ENABLE_STABLEHLO",
+         "TORCH_MLIR_ENABLE_TOSA",
+     ],
+     strip_include_prefix = "include",
+@@ -553,7 +553,7 @@ cc_library(
+         ":TorchMLIRTorchToArith",
+         ":TorchMLIRTorchToLinalg",
+         ":TorchMLIRTorchToSCF",
+-        ":TorchMLIRTorchToStablehlo",
++        # ":TorchMLIRTorchToStablehlo",
+         ":TorchMLIRTorchToTMTensor",
+         ":TorchMLIRTorchToTensor",
+         ":TorchMLIRTorchToTosa",
+@@ -568,7 +568,7 @@ cc_library(
+     ]),
+     hdrs = glob(["include/torch-mlir/Dialect/TorchConversion/Transforms/*.h"]),
+     defines = [
+-        "TORCH_MLIR_ENABLE_STABLEHLO",
++        # "TORCH_MLIR_ENABLE_STABLEHLO",
+         "TORCH_MLIR_ENABLE_TOSA",
+     ],
+     strip_include_prefix = "include",
+@@ -582,7 +582,7 @@ cc_library(
+         ":TorchMLIRTorchToArith",
+         ":TorchMLIRTorchToLinalg",
+         ":TorchMLIRTorchToSCF",
+-        ":TorchMLIRTorchToStablehlo",
++        # ":TorchMLIRTorchToStablehlo",
+         ":TorchMLIRTorchToTMTensor",
+         ":TorchMLIRTorchToTensor",
+         ":TorchMLIRTorchToTosa",
+@@ -893,7 +893,7 @@ cc_library(
+     ],
+     copts = [
+         "-DTORCH_MLIR_ENABLE_REFBACKEND",
+-        "-DTORCH_MLIR_ENABLE_STABLEHLO",
++        # "-DTORCH_MLIR_ENABLE_STABLEHLO",
+         "-DTORCH_MLIR_ENABLE_TOSA",
+     ],
+     strip_include_prefix = "include",
+@@ -911,8 +911,8 @@ cc_library(
+         "@llvm-project//mlir:DialectUtils",
+         "@llvm-project//mlir:IR",
+         "@llvm-project//mlir:TensorInferTypeOpInterfaceImpl",
+-        "@stablehlo//:linalg_passes",
+-        "@stablehlo//:stablehlo_passes",
++        # "@stablehlo//:linalg_passes",
++        # "@stablehlo//:stablehlo_passes",
+     ],
+ )
+ 

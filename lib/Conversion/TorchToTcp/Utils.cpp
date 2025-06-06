@@ -51,7 +51,7 @@ Value broadcastRankInLeadingDims(ConversionPatternRewriter &rewriter,
                                  Value input, int64_t rankIncrease) {
   if (rankIncrease == 0)
     return input;
-  RankedTensorType inputType = input.getType().cast<RankedTensorType>();
+  RankedTensorType inputType = cast<RankedTensorType>(input.getType());
 
   SmallVector<ReassociationExprs> reassociationMap(inputType.getRank());
   if (inputType.getRank() > 0) {
@@ -77,7 +77,7 @@ Value broadcastRankInTrailingDims(ConversionPatternRewriter &rewriter,
                                   Value input, int64_t rankIncrease) {
   if (rankIncrease == 0)
     return input;
-  RankedTensorType inputType = input.getType().cast<RankedTensorType>();
+  RankedTensorType inputType = cast<RankedTensorType>(input.getType());
 
   SmallVector<ReassociationExprs> reassociationMap(inputType.getRank());
   if (inputType.getRank() > 0) {
@@ -100,7 +100,7 @@ Value broadcastRankInTrailingDims(ConversionPatternRewriter &rewriter,
 
 Value broadcastRank0Dor1DToND(ConversionPatternRewriter &rewriter, Value input,
                               int64_t targetRank, int64_t axisInOutput) {
-  RankedTensorType inputType = input.getType().cast<RankedTensorType>();
+  RankedTensorType inputType = cast<RankedTensorType>(input.getType());
   auto inputRank = inputType.getRank();
   assert(inputRank < 2 && "Only 0D and 1D tensors are supported!");
 
@@ -127,10 +127,10 @@ Value broadcastRank0Dor1DToND(ConversionPatternRewriter &rewriter, Value input,
 Value broadcastShapeExceptDims(ConversionPatternRewriter &rewriter, Value input,
                                Value target,
                                llvm::SmallDenseSet<int64_t> dimsToExclude) {
-  RankedTensorType inputType = input.getType().cast<RankedTensorType>();
+  RankedTensorType inputType = cast<RankedTensorType>(input.getType());
   auto inputShape = inputType.getShape();
 
-  RankedTensorType targetType = target.getType().cast<RankedTensorType>();
+  RankedTensorType targetType = cast<RankedTensorType>(target.getType());
   auto targetShape = targetType.getShape();
 
   SmallVector<int64_t> axes;
@@ -252,8 +252,8 @@ broadcastManyToMatchShape(ConversionPatternRewriter &rewriter, Location loc,
 std::pair<Value, Value>
 broadcastToMatchShape(ConversionPatternRewriter &rewriter, Value lhs,
                       Value rhs) {
-  RankedTensorType inputAType = lhs.getType().cast<RankedTensorType>();
-  RankedTensorType inputBType = rhs.getType().cast<RankedTensorType>();
+  RankedTensorType inputAType = cast<RankedTensorType>(lhs.getType());
+  RankedTensorType inputBType = cast<RankedTensorType>(rhs.getType());
 
   Value resultA = lhs;
   Value resultB = rhs;
@@ -264,8 +264,8 @@ broadcastToMatchShape(ConversionPatternRewriter &rewriter, Value lhs,
     resultA = broadcastRankInLeadingDims(
         rewriter, resultA, inputBType.getRank() - inputAType.getRank());
 
-  inputAType = resultA.getType().cast<RankedTensorType>();
-  inputBType = resultB.getType().cast<RankedTensorType>();
+  inputAType = cast<RankedTensorType>(resultA.getType());
+  inputBType = cast<RankedTensorType>(resultB.getType());
   SmallVector<int64_t> inputAShape(inputAType.getShape().begin(),
                                    inputAType.getShape().end());
   SmallVector<int64_t> inputBShape(inputBType.getShape().begin(),
@@ -312,8 +312,8 @@ broadcastToMatchShape(ConversionPatternRewriter &rewriter, Value lhs,
 Value broadcast0DOr1DToNDAndMatchShape(ConversionPatternRewriter &rewriter,
                                        Value input, Value target,
                                        Type resultType, int64_t axisInOutput) {
-  RankedTensorType inputType = input.getType().cast<RankedTensorType>();
-  RankedTensorType targetType = target.getType().cast<RankedTensorType>();
+  RankedTensorType inputType = cast<RankedTensorType>(input.getType());
+  RankedTensorType targetType = cast<RankedTensorType>(target.getType());
 
   auto inputRank = inputType.getRank();
   auto targetRank = targetType.getRank();
@@ -367,9 +367,9 @@ Value broadcast0DOr1DFromShape(ConversionPatternRewriter &rewriter, Value input,
                                ArrayRef<Value> targetVal,
                                SmallVector<int64_t> resultShape,
                                int64_t axisInOutput) {
-  RankedTensorType inputType = input.getType().cast<RankedTensorType>();
+  RankedTensorType inputType = cast<RankedTensorType>(input.getType());
   auto inputRank = inputType.getRank();
-  RankedTensorType targetType = input.getType().cast<RankedTensorType>();
+  RankedTensorType targetType = cast<RankedTensorType>(input.getType());
 
   int64_t targetRank = 0;
   SmallVector<Value> dimSizes;
@@ -417,15 +417,15 @@ Value castTensorToDtype(ConversionPatternRewriter &rewriter, Type srcType,
   if (srcType == dstType)
     return input;
 
-  RankedTensorType inputType = input.getType().cast<RankedTensorType>();
+  RankedTensorType inputType = cast<RankedTensorType>(input.getType());
   auto resultType = inputType.cloneWith(inputType.getShape(), convertedType);
 
   SignednessAttr inputSignedness;
   SignednessAttr outputSignedness;
-  if (auto inputIntType = srcType.dyn_cast<mlir::IntegerType>())
+  if (auto inputIntType = dyn_cast<mlir::IntegerType>(srcType))
     inputSignedness = getTcpSignednessAttr(input.getDefiningOp()->getContext(),
                                            inputIntType.getSignedness());
-  if (auto outputIntType = dstType.dyn_cast<mlir::IntegerType>())
+  if (auto outputIntType = dyn_cast<mlir::IntegerType>(dstType))
     outputSignedness = getTcpSignednessAttr(input.getDefiningOp()->getContext(),
                                             outputIntType.getSignedness());
   return rewriter.create<tcp::CastOp>(input.getDefiningOp()->getLoc(),

@@ -29,7 +29,7 @@ namespace {
 SmallVector<int64_t> getValuesFromIndexArrayAttribute(ArrayAttr attr) {
   SmallVector<int64_t> arrayValues;
   for (Attribute val : attr.getValue())
-    arrayValues.push_back(val.cast<IntegerAttr>().getValue().getSExtValue());
+    arrayValues.push_back(cast<IntegerAttr>(val).getValue().getSExtValue());
   return arrayValues;
 }
 
@@ -40,9 +40,8 @@ public:
   LogicalResult matchAndRewrite(BroadcastOp op, OpAdaptor adaptor,
                                 ConversionPatternRewriter &b) const override {
     Location loc = op->getLoc();
-    auto resultTensorType = getTypeConverter()
-                                ->convertType(op->getResult(0).getType())
-                                .cast<RankedTensorType>();
+    auto resultTensorType = cast<RankedTensorType>(getTypeConverter()
+                                ->convertType(op->getResult(0).getType()));
     auto inputTensor = op->getOperands()[0];
 
     SmallVector<int64_t> axes = getValuesFromIndexArrayAttribute(op.getAxes());

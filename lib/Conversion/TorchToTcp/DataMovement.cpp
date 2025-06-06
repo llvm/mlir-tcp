@@ -41,7 +41,7 @@ LogicalResult prepareArgumentsForSlicingOp(OpTy op, OpAdaptor adaptor,
   Location loc = op.getLoc();
   auto input = adaptor.getSelf();
   RankedTensorType inputType =
-      input.getType().template cast<RankedTensorType>();
+      cast<RankedTensorType>(input.getType());
 
   Value zero = rewriter.create<arith::ConstantIndexOp>(loc, 0);
   Value one = rewriter.create<arith::ConstantIndexOp>(loc, 1);
@@ -64,8 +64,8 @@ LogicalResult prepareArgumentsForSlicingOp(OpTy op, OpAdaptor adaptor,
   Value builtinTypeStart = adaptor.getStart();
   Value builtinTypeEnd = adaptor.getEnd();
 
-  if (torchTypeStart.getType().isa<OptionalType>() ||
-      torchTypeEnd.getType().isa<OptionalType>())
+  if (isa<OptionalType>(torchTypeStart.getType()) ||
+      isa<OptionalType>(torchTypeEnd.getType()))
     return rewriter.notifyMatchFailure(op, "unimplemented optional type arg");
 
   Value stepIndex = castIntToIndex(rewriter, loc, adaptor.getStep());
@@ -75,7 +75,7 @@ LogicalResult prepareArgumentsForSlicingOp(OpTy op, OpAdaptor adaptor,
   // We cannot use to positive valid dim as for negative strides we need to
   // clamp to `-1` so that the full tensor bounds are available:
   Value end = builtinTypeEnd;
-  if (torchTypeEnd.getType().isa<Torch::NoneType>()) {
+  if (isa<Torch::NoneType>(torchTypeEnd.getType())) {
     end = dimSize;
   } else {
     end = castIntToIndex(rewriter, loc, end);
@@ -140,7 +140,7 @@ public:
         getTypeConvertedValues(rewriter, loc, typeConverter, tensorsTorchType);
 
     RankedTensorType newResultType =
-        typeConverter->convertType(op.getType()).cast<RankedTensorType>();
+        cast<RankedTensorType>(typeConverter->convertType(op.getType()));
     int rank = newResultType.getRank();
     Value dimValue = op.getDim();
     int64_t dim;
@@ -185,9 +185,8 @@ public:
       return failure();
 
     auto input = adaptor.getSelf();
-    RankedTensorType resultType = getTypeConverter()
-                                      ->convertType(op->getResult(0).getType())
-                                      .cast<RankedTensorType>();
+    RankedTensorType resultType = cast<RankedTensorType>(getTypeConverter()
+                                      ->convertType(op->getResult(0).getType()));
 
     SmallVector<Value> resultShape;
     SmallVector<Value> offsets;
@@ -213,14 +212,13 @@ public:
                   ConversionPatternRewriter &rewriter) const override {
     auto input = adaptor.getSelf();
     auto indices = adaptor.getIndex();
-    RankedTensorType resultType = getTypeConverter()
-                                      ->convertType(op->getResult(0).getType())
-                                      .template cast<RankedTensorType>();
+    RankedTensorType resultType = cast<RankedTensorType>(getTypeConverter()
+                                      ->convertType(op->getResult(0).getType()));
 
     int64_t dim = 0;
     if (!matchPattern(op.getDim(), m_TorchConstantInt(&dim)))
       return op.emitError("dim on torch.gather must be an int constant");
-    auto inputType = input.getType().cast<RankedTensorType>();
+    auto inputType = cast<RankedTensorType>(input.getType());
     dim = Torch::toPositiveDim(dim, inputType.getRank());
 
     bool sparseGrad = false;
