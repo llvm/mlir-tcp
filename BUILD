@@ -150,6 +150,7 @@ cc_library(
     name = "TcpDialectPasses",
     srcs = [
         "lib/Dialect/Transforms/DropSymbolicShapeOpsPass.cpp",
+        "lib/Dialect/Transforms/EliminateUnusedTorchOpsPass.cpp",
         "lib/Dialect/Transforms/FuseTcpOpsPass.cpp",
         "lib/Dialect/Transforms/FusionPatterns.cpp",
         "lib/Dialect/Transforms/IsolateGroupOpsPass.cpp",
@@ -160,6 +161,7 @@ cc_library(
     ],
     hdrs = [
         "include/mlir-tcp/Dialect/Transforms/DropSymbolicShapeOpsPass.h",
+        "include/mlir-tcp/Dialect/Transforms/EliminateUnusedTorchOpsPass.h",
         "include/mlir-tcp/Dialect/Transforms/FuseTcpOpsPass.h",
         "include/mlir-tcp/Dialect/Transforms/FusionPatterns.h",
         "include/mlir-tcp/Dialect/Transforms/IsolateGroupOpsPass.h",
@@ -175,6 +177,7 @@ cc_library(
         "@llvm-project//mlir:TensorDialect",
         "@llvm-project//mlir:TensorTransforms",
         "@llvm-project//mlir:Transforms",
+        "@torch-mlir//:TorchMLIRTorchDialect",
     ],
 )
 

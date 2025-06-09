@@ -428,8 +428,7 @@ void torch_to_tcp::populateTcpCustomOpPatternsAndLegality(
   // Torch -> TOSA supports only 2D convolutions; map the rest to
   // TCP custom_op instead.
   auto is2dConvOp = [](AtenConvolutionOp op) {
-    auto inputTy =
-        cast<torch::Torch::ValueTensorType>(op.getInput().getType());
+    auto inputTy = cast<torch::Torch::ValueTensorType>(op.getInput().getType());
     return inputTy.getSizes().size() == 4;
   };
 

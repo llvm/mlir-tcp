@@ -36,8 +36,8 @@ public:
   matchAndRewrite(GatherOp op, OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
     Location loc = op->getLoc();
-    auto resultTensorType = cast<RankedTensorType>(getTypeConverter()
-                                ->convertType(op.getOut().getType()));
+    auto resultTensorType = cast<RankedTensorType>(
+        getTypeConverter()->convertType(op.getOut().getType()));
 
     auto inputTensor = adaptor.getInput();
     auto indicesTensor = adaptor.getIndices();
@@ -109,8 +109,8 @@ public:
   matchAndRewrite(GatherNDOp op, OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
     Location loc = op->getLoc();
-    auto resultTensorType = cast<RankedTensorType>(getTypeConverter()
-                                ->convertType(op.getOut().getType()));
+    auto resultTensorType = cast<RankedTensorType>(
+        getTypeConverter()->convertType(op.getOut().getType()));
 
     auto inputTensor = adaptor.getInput();
     auto indicesTensor = adaptor.getIndices();

@@ -40,8 +40,7 @@ LogicalResult prepareArgumentsForSlicingOp(OpTy op, OpAdaptor adaptor,
                                            SmallVector<Value> &strides) {
   Location loc = op.getLoc();
   auto input = adaptor.getSelf();
-  RankedTensorType inputType =
-      cast<RankedTensorType>(input.getType());
+  RankedTensorType inputType = cast<RankedTensorType>(input.getType());
 
   Value zero = rewriter.create<arith::ConstantIndexOp>(loc, 0);
   Value one = rewriter.create<arith::ConstantIndexOp>(loc, 1);
@@ -185,8 +184,8 @@ public:
       return failure();
 
     auto input = adaptor.getSelf();
-    RankedTensorType resultType = cast<RankedTensorType>(getTypeConverter()
-                                      ->convertType(op->getResult(0).getType()));
+    RankedTensorType resultType = cast<RankedTensorType>(
+        getTypeConverter()->convertType(op->getResult(0).getType()));
 
     SmallVector<Value> resultShape;
     SmallVector<Value> offsets;
@@ -212,8 +211,8 @@ public:
                   ConversionPatternRewriter &rewriter) const override {
     auto input = adaptor.getSelf();
     auto indices = adaptor.getIndex();
-    RankedTensorType resultType = cast<RankedTensorType>(getTypeConverter()
-                                      ->convertType(op->getResult(0).getType()));
+    RankedTensorType resultType = cast<RankedTensorType>(
+        getTypeConverter()->convertType(op->getResult(0).getType()));
 
     int64_t dim = 0;
     if (!matchPattern(op.getDim(), m_TorchConstantInt(&dim)))

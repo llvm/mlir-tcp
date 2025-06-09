@@ -133,9 +133,9 @@ public:
       rewriter.replaceOp(op, input);
       return success();
     }
-    RankedTensorType resultType =
-        cast<RankedTensorType>(OpConversionPattern<AtenOpT>::getTypeConverter()
-            ->convertType(op->getResult(0).getType()));
+    RankedTensorType resultType = cast<RankedTensorType>(
+        OpConversionPattern<AtenOpT>::getTypeConverter()->convertType(
+            op->getResult(0).getType()));
     auto axesAttr = rewriter.getI64ArrayAttr(axes);
     rewriter.replaceOpWithNewOp<tcp::BroadcastOp>(op, resultType, input,
                                                   resultShape, axesAttr);
@@ -218,8 +218,9 @@ public:
   matchAndRewrite(AtenOpT op, OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
 
-    auto outType = dyn_cast<RankedTensorType>(OpConversionPattern<AtenOpT>::getTypeConverter()
-                       ->convertType(op.getType()));
+    auto outType = dyn_cast<RankedTensorType>(
+        OpConversionPattern<AtenOpT>::getTypeConverter()->convertType(
+            op.getType()));
     Type outElemTy = outType.getElementType();
 
     if (!checkZerosOnesOpAttributes<AtenOpT>(op, outType)) {
@@ -263,8 +264,9 @@ public:
   matchAndRewrite(AtenOpT op, OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
     Value input = adaptor.getSelf();
-    auto outType = dyn_cast<RankedTensorType>(OpConversionPattern<AtenOpT>::getTypeConverter()
-                       ->convertType(op.getType()));
+    auto outType = dyn_cast<RankedTensorType>(
+        OpConversionPattern<AtenOpT>::getTypeConverter()->convertType(
+            op.getType()));
     Type outElemTy = outType.getElementType();
 
     // TODO: Check the attribute for input vtensor

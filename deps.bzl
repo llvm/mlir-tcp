@@ -20,8 +20,8 @@ def third_party_deps():
             path = local_llvm_repo_path(),
         )
     else:
-        LLVM_COMMIT = "eda3e96b401a9b86132e39432e41e2000d1ab382"
-        LLVM_SHA256 = "26c4060f19982482d57f1a47945f3f7613b7659415f0482c4bac63769366b501"
+        LLVM_COMMIT = "b231e5ff504295641b0f580ceefa2e1048011614"
+        LLVM_SHA256 = "88dfa59052730710cb48fa20b00a4344144edd1c3cb524c06d983899835e491a"
         http_archive(
             name = "llvm-raw",
             build_file_content = "# empty",
@@ -42,7 +42,7 @@ def third_party_deps():
         http_archive(
             name = "torch-mlir-raw",
             build_file_content = "# empty",
-            patches = ["//third_party/patches:torch-mlir-bazel-build.1.patch"],
+            patches = ["//third_party/patches:torch-mlir-bazel-build.1.patch", "//third_party/patches:torch-mlir-bazel-build.2.patch"],
             sha256 = TORCH_MLIR_SHA256,
             strip_prefix = "torch-mlir-" + TORCH_MLIR_COMMIT,
             urls = ["https://github.com/llvm/torch-mlir/archive/{commit}.tar.gz".format(commit = TORCH_MLIR_COMMIT)],

@@ -318,8 +318,9 @@ public:
   matchAndRewrite(TcpOpT op, OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
     Location loc = op->getLoc();
-    auto resultTensorType = cast<RankedTensorType>(OpConversionPattern<TcpOpT>::getTypeConverter()
-                                ->convertType(op->getResult(0).getType()));
+    auto resultTensorType = cast<RankedTensorType>(
+        OpConversionPattern<TcpOpT>::getTypeConverter()->convertType(
+            op->getResult(0).getType()));
     auto tensorOperands = llvm::to_vector<6>(
         llvm::make_filter_range(adaptor.getOperands(), [](Value v) {
           return isa<RankedTensorType>(v.getType());
