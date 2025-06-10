@@ -69,7 +69,7 @@ createLinalgPayloadForElementwiseOp(Operation *op,
     // This implementation always performs the max followed by min.
     // TODO: Is this going to work for degenerative floating point numbers?
     Value result = payloadArgs[0];
-    if (elemType.isa<mlir::FloatType>()) {
+    if (isa<mlir::FloatType>(elemType)) {
       auto minFloat = clampOp.getMinFloat();
       auto maxFloat = clampOp.getMaxFloat();
       if (minFloat)
@@ -80,7 +80,7 @@ createLinalgPayloadForElementwiseOp(Operation *op,
         result = b.create<arith::MinimumFOp>(
             loc, result,
             b.create<arith::ConstantFloatOp>(loc, *maxFloat, b.getF32Type()));
-    } else if (elemType.isa<mlir::IntegerType>()) {
+    } else if (isa<mlir::IntegerType>(elemType)) {
       auto minInt = clampOp.getMinInt();
       auto maxInt = clampOp.getMaxInt();
       if (minInt)
@@ -136,9 +136,9 @@ createLinalgPayloadForElementwiseOp(Operation *op,
   }
 
   if (isa<AbsOp>(op)) {
-    if (elemType.isa<mlir::FloatType>())
+    if (isa<mlir::FloatType>(elemType))
       return {b.create<math::AbsFOp>(loc, payloadArgs[0])};
-    else if (elemType.isa<mlir::IntegerType>())
+    else if (isa<mlir::IntegerType>(elemType))
       return {b.create<math::AbsIOp>(loc, payloadArgs[0])};
     else
       llvm_unreachable("unsupported element type in "
@@ -158,9 +158,9 @@ createLinalgPayloadForElementwiseOp(Operation *op,
   }
 
   if (isa<AddOp>(op)) {
-    if (elemType.isa<mlir::FloatType>())
+    if (isa<mlir::FloatType>(elemType))
       return {b.create<arith::AddFOp>(loc, payloadArgs[0], payloadArgs[1])};
-    else if (elemType.isa<mlir::IntegerType>())
+    else if (isa<mlir::IntegerType>(elemType))
       return {b.create<arith::AddIOp>(loc, payloadArgs[0], payloadArgs[1])};
     else
       llvm_unreachable("unsupported element type in "
@@ -168,9 +168,9 @@ createLinalgPayloadForElementwiseOp(Operation *op,
   }
 
   if (isa<SubOp>(op)) {
-    if (elemType.isa<mlir::FloatType>())
+    if (isa<mlir::FloatType>(elemType))
       return {b.create<arith::SubFOp>(loc, payloadArgs[0], payloadArgs[1])};
-    else if (elemType.isa<mlir::IntegerType>())
+    else if (isa<mlir::IntegerType>(elemType))
       return {b.create<arith::SubIOp>(loc, payloadArgs[0], payloadArgs[1])};
     else
       llvm_unreachable("unsupported element type in "
@@ -178,9 +178,9 @@ createLinalgPayloadForElementwiseOp(Operation *op,
   }
 
   if (isa<MulOp>(op)) {
-    if (elemType.isa<mlir::FloatType>())
+    if (isa<mlir::FloatType>(elemType))
       return {b.create<arith::MulFOp>(loc, payloadArgs[0], payloadArgs[1])};
-    else if (elemType.isa<mlir::IntegerType>())
+    else if (isa<mlir::IntegerType>(elemType))
       return {b.create<arith::MulIOp>(loc, payloadArgs[0], payloadArgs[1])};
     else
       llvm_unreachable("unsupported element type in "
@@ -188,7 +188,7 @@ createLinalgPayloadForElementwiseOp(Operation *op,
   }
 
   if (isa<DivFOp>(op)) {
-    if (elemType.isa<mlir::FloatType>())
+    if (isa<mlir::FloatType>(elemType))
       return {b.create<arith::DivFOp>(loc, payloadArgs[0], payloadArgs[1])};
     else
       llvm_unreachable("unsupported element type in "
@@ -196,7 +196,7 @@ createLinalgPayloadForElementwiseOp(Operation *op,
   }
 
   if (auto divOp = dyn_cast<DivSIOp>(op)) {
-    if (!elemType.isa<mlir::IntegerType>())
+    if (!isa<mlir::IntegerType>(elemType))
       llvm_unreachable("unsupported element type in "
                        "createLinalgPayloadForElementwiseOp for tcp.divsi");
     if (divOp.getRoundingMode() == RoundingMode::Trunc)
@@ -210,7 +210,7 @@ createLinalgPayloadForElementwiseOp(Operation *op,
   }
 
   if (auto divOp = dyn_cast<DivUIOp>(op)) {
-    if (!elemType.isa<mlir::IntegerType>())
+    if (!isa<mlir::IntegerType>(elemType))
       llvm_unreachable("unsupported element type in "
                        "createLinalgPayloadForElementwiseOp for tcp.divui");
     if (divOp.getRoundingMode() == RoundingMode::Trunc ||
@@ -222,7 +222,7 @@ createLinalgPayloadForElementwiseOp(Operation *op,
   }
 
   if (isa<Atan2Op>(op)) {
-    if (elemType.isa<mlir::FloatType>())
+    if (isa<mlir::FloatType>(elemType))
       return {b.create<math::Atan2Op>(loc, payloadArgs[0], payloadArgs[1])};
     else
       llvm_unreachable("unsupported element type in "
@@ -231,7 +231,7 @@ createLinalgPayloadForElementwiseOp(Operation *op,
 
   if (auto castOp = dyn_cast<CastOp>(op)) {
     auto inputType =
-        castOp.getIn().getType().dyn_cast<RankedTensorType>().getElementType();
+        dyn_cast<RankedTensorType>(castOp.getIn().getType()).getElementType();
     auto outputType = resultTensorType.getElementType();
 
     if (inputType.getIntOrFloatBitWidth() ==
@@ -246,24 +246,24 @@ createLinalgPayloadForElementwiseOp(Operation *op,
       // To I1 (Bool) type
       Value cstZero =
           b.create<arith::ConstantOp>(loc, b.getZeroAttr(inputType));
-      if (inputType.isa<mlir::FloatType>()) {
+      if (isa<mlir::FloatType>(inputType)) {
         return {b.create<arith::CmpFOp>(loc, arith::CmpFPredicate::UNE,
                                         payloadArgs[0], cstZero)};
-      } else if (inputType.isa<mlir::IntegerType>()) {
+      } else if (isa<mlir::IntegerType>(inputType)) {
         return {b.create<arith::CmpIOp>(loc, arith::CmpIPredicate::ne,
                                         payloadArgs[0], cstZero)};
       }
-    } else if (outputType.isa<mlir::FloatType>()) {
+    } else if (isa<mlir::FloatType>(outputType)) {
       // TO FP type
       // FP -> FP
-      if (inputType.dyn_cast<mlir::FloatType>()) {
+      if (dyn_cast<mlir::FloatType>(inputType)) {
         if (inputType.getIntOrFloatBitWidth() >
             outputType.getIntOrFloatBitWidth())
           return {b.create<arith::TruncFOp>(loc, outputType, payloadArgs[0])};
         return {b.create<arith::ExtFOp>(loc, outputType, payloadArgs[0])};
       }
       // INT -> FP
-      else if (inputType.dyn_cast<mlir::IntegerType>()) {
+      else if (dyn_cast<mlir::IntegerType>(inputType)) {
         // Signless or Unsigned INT to FP
         // Curently, signless is only for i1 (bool) case,
         // which has been handeled above
@@ -274,10 +274,10 @@ createLinalgPayloadForElementwiseOp(Operation *op,
         else if (castOp.getInIntSignedness().value() == Signedness::Signed)
           return {b.create<arith::SIToFPOp>(loc, outputType, payloadArgs[0])};
       }
-    } else if (outputType.isa<mlir::IntegerType>()) {
+    } else if (isa<mlir::IntegerType>(outputType)) {
       // TO INT type
       // FP -> INT
-      if (inputType.dyn_cast<mlir::FloatType>()) {
+      if (dyn_cast<mlir::FloatType>(inputType)) {
         // FP to Signless or Unsigned INT
         if (castOp.getOutIntSignedness().value() == Signedness::Signless ||
             castOp.getOutIntSignedness().value() == Signedness::Unsigned)
@@ -287,7 +287,7 @@ createLinalgPayloadForElementwiseOp(Operation *op,
           return {b.create<arith::FPToSIOp>(loc, outputType, payloadArgs[0])};
       }
       // INT -> INT
-      if (inputType.dyn_cast<mlir::IntegerType>()) {
+      if (dyn_cast<mlir::IntegerType>(inputType)) {
         if (inputType.getIntOrFloatBitWidth() >
             outputType.getIntOrFloatBitWidth())
           return {b.create<arith::TruncIOp>(loc, outputType, payloadArgs[0])};
@@ -318,12 +318,12 @@ public:
   matchAndRewrite(TcpOpT op, OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
     Location loc = op->getLoc();
-    auto resultTensorType = OpConversionPattern<TcpOpT>::getTypeConverter()
-                                ->convertType(op->getResult(0).getType())
-                                .template cast<RankedTensorType>();
+    auto resultTensorType = cast<RankedTensorType>(
+        OpConversionPattern<TcpOpT>::getTypeConverter()->convertType(
+            op->getResult(0).getType()));
     auto tensorOperands = llvm::to_vector<6>(
         llvm::make_filter_range(adaptor.getOperands(), [](Value v) {
-          return v.getType().isa<RankedTensorType>();
+          return isa<RankedTensorType>(v.getType());
         }));
 
     // Create Linalg payload

@@ -40,7 +40,7 @@ bool checkZerosOnesOpAttributes(AtenOpT op, RankedTensorType outType) {
 
   // check default layout
   int64_t memoryLayout;
-  if (!op.getLayout().getType().template isa<Torch::NoneType>() &&
+  if (!isa<Torch::NoneType>(op.getLayout().getType()) &&
       (!matchPattern(op.getLayout(), m_TorchConstantInt(&memoryLayout)) ||
        memoryLayout != 0)) {
     return false;
@@ -48,7 +48,7 @@ bool checkZerosOnesOpAttributes(AtenOpT op, RankedTensorType outType) {
 
   // check default pin_memory
   bool pinMemory;
-  if (!op.getPinMemory().getType().template isa<Torch::NoneType>() &&
+  if (!isa<Torch::NoneType>(op.getPinMemory().getType()) &&
       (!matchPattern(op.getPinMemory(), m_TorchConstantBool(&pinMemory)) ||
        pinMemory)) {
     return false;
@@ -67,7 +67,7 @@ public:
   matchAndRewrite(AtenOpT op, OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
     Value input = adaptor.getSelf();
-    RankedTensorType inputType = input.getType().dyn_cast<RankedTensorType>();
+    RankedTensorType inputType = dyn_cast<RankedTensorType>(input.getType());
 
     ArrayRef<int64_t> inputShape = inputType.getShape();
 
@@ -84,7 +84,7 @@ public:
     SmallVector<int64_t> axes;
     SmallVector<Value> resultShape;
     ArrayRef<int64_t> newInputShape =
-        input.getType().dyn_cast<RankedTensorType>().getShape();
+        dyn_cast<RankedTensorType>(input.getType()).getShape();
     for (int64_t i = 0; i < static_cast<int64_t>(newDimSizes.size()); ++i) {
       Value newDimSize = newDimSizes[i];
 
@@ -133,10 +133,9 @@ public:
       rewriter.replaceOp(op, input);
       return success();
     }
-    RankedTensorType resultType =
-        OpConversionPattern<AtenOpT>::getTypeConverter()
-            ->convertType(op->getResult(0).getType())
-            .template cast<RankedTensorType>();
+    RankedTensorType resultType = cast<RankedTensorType>(
+        OpConversionPattern<AtenOpT>::getTypeConverter()->convertType(
+            op->getResult(0).getType()));
     auto axesAttr = rewriter.getI64ArrayAttr(axes);
     rewriter.replaceOpWithNewOp<tcp::BroadcastOp>(op, resultType, input,
                                                   resultShape, axesAttr);
@@ -153,9 +152,9 @@ public:
   matchAndRewrite(ValueTensorLiteralOp op, OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
     RankedTensorType resultType =
-        getTypeConverter()->convertType(op.getType()).cast<RankedTensorType>();
+        cast<RankedTensorType>(getTypeConverter()->convertType(op.getType()));
 
-    if (auto elements = op.getValueAttr().dyn_cast<DenseIntElementsAttr>()) {
+    if (auto elements = dyn_cast<DenseIntElementsAttr>(op.getValueAttr())) {
       Type elementType = resultType.getElementType();
       auto denseIntAttr = elements.mapValues(elementType, [&](const APInt &v) {
         return APInt(elementType.getIntOrFloatBitWidth(), v.getSExtValue());
@@ -189,7 +188,7 @@ public:
                   ConversionPatternRewriter &rewriter) const override {
     Location loc = op->getLoc();
     Value self = adaptor.getSelf();
-    auto type = self.getType().cast<RankedTensorType>();
+    auto type = cast<RankedTensorType>(self.getType());
     if (!isa<ConstantIntOp>(op->getOperand(1).getDefiningOp())) {
       return rewriter.notifyMatchFailure(op, "dim must be a constant int");
     }
@@ -219,9 +218,9 @@ public:
   matchAndRewrite(AtenOpT op, OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
 
-    auto outType = OpConversionPattern<AtenOpT>::getTypeConverter()
-                       ->convertType(op.getType())
-                       .template dyn_cast<RankedTensorType>();
+    auto outType = dyn_cast<RankedTensorType>(
+        OpConversionPattern<AtenOpT>::getTypeConverter()->convertType(
+            op.getType()));
     Type outElemTy = outType.getElementType();
 
     if (!checkZerosOnesOpAttributes<AtenOpT>(op, outType)) {
@@ -265,13 +264,13 @@ public:
   matchAndRewrite(AtenOpT op, OpAdaptor adaptor,
                   ConversionPatternRewriter &rewriter) const override {
     Value input = adaptor.getSelf();
-    auto outType = OpConversionPattern<AtenOpT>::getTypeConverter()
-                       ->convertType(op.getType())
-                       .template dyn_cast<RankedTensorType>();
+    auto outType = dyn_cast<RankedTensorType>(
+        OpConversionPattern<AtenOpT>::getTypeConverter()->convertType(
+            op.getType()));
     Type outElemTy = outType.getElementType();
 
     // TODO: Check the attribute for input vtensor
-    if (!op.getMemoryFormat().getType().template isa<Torch::NoneType>())
+    if (!isa<Torch::NoneType>(op.getMemoryFormat().getType()))
       return rewriter.notifyMatchFailure(
           op, "Only default memory format is supported");
 
@@ -287,7 +286,7 @@ public:
 
     Value resultOp = torch_to_tcp::broadcast0DOr1DToNDAndMatchShape(
         rewriter, constOp, input,
-        constOp.getType().cast<RankedTensorType>().getElementType());
+        cast<RankedTensorType>(constOp.getType()).getElementType());
 
     rewriter.replaceOp(op, resultOp);
 

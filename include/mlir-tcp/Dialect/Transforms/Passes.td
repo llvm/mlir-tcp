@@ -45,4 +45,10 @@ def DropSymbolicShapeOps : Pass<"drop-symbolic-shape-ops", "func::FuncOp"> {
   let constructor = "mlir::tcp::createDropSymbolicShapeOpsPass()";
 }
 
+// \brief This pass removes unused torch ops.
+def EliminateUnusedTorchOps : Pass<"eliminate-unused-torch-ops", "ModuleOp"> {
+  let summary = "Removes unused/unnecessary torch ops";
+  let constructor = "mlir::tcp::createEliminateUnusedTorchOpsPass()";
+}
+
 #endif // TCP_PASSES

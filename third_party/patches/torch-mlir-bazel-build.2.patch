@@ -1,0 +1,11 @@
+diff --git utils/bazel/torch-mlir-overlay/test/Conversion/BUILD.bazel utils/bazel/torch-mlir-overlay/test/Conversion/BUILD.bazel
+index 2cbe8091..852c9886 100644
+--- utils/bazel/torch-mlir-overlay/test/Conversion/BUILD.bazel
++++ utils/bazel/torch-mlir-overlay/test/Conversion/BUILD.bazel
+@@ -11,5 +11,5 @@ package(default_visibility = ["//visibility:public"])
+             "@torch-mlir//test:lit_data",
+         ],
+     )
+-    for src in glob(["**/*.mlir"])
++    for src in glob(["**/*.mlir"], exclude = ["TorchToStablehlo/*.mlir"])
+ ]

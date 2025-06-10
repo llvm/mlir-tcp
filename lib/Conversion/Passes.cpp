@@ -9,7 +9,6 @@
 
 #include "mlir-tcp/Conversion/Passes.h"
 
-#include "mlir-tcp/Conversion/StablehloToTcp/StablehloToTcp.h"
 #include "mlir-tcp/Conversion/TcpToArith/TcpToArith.h"
 #include "mlir-tcp/Conversion/TcpToLinalg/TcpToLinalg.h"
 #include "mlir-tcp/Conversion/TcpToTensor/TcpToTensor.h"

@@ -15,8 +15,6 @@
 #include "mlir-tcp/InitAll.h"
 #include "mlir-tcp/Pipeline/Pipeline.h"
 
-#include "stablehlo/dialect/Register.h"
-
 using namespace mlir;
 
 int main(int argc, char **argv) {
@@ -27,8 +25,6 @@ int main(int argc, char **argv) {
   registerAllDialects(registry);
   registerAllExtensions(registry);
   mlir::tcp::registerAllDialects(registry);
-
-  mlir::stablehlo::registerAllDialects(registry);
 
   mlir::tcp::registerTcpPipelines();
 

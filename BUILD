@@ -150,6 +150,7 @@ cc_library(
     name = "TcpDialectPasses",
     srcs = [
         "lib/Dialect/Transforms/DropSymbolicShapeOpsPass.cpp",
+        "lib/Dialect/Transforms/EliminateUnusedTorchOpsPass.cpp",
         "lib/Dialect/Transforms/FuseTcpOpsPass.cpp",
         "lib/Dialect/Transforms/FusionPatterns.cpp",
         "lib/Dialect/Transforms/IsolateGroupOpsPass.cpp",
@@ -160,6 +161,7 @@ cc_library(
     ],
     hdrs = [
         "include/mlir-tcp/Dialect/Transforms/DropSymbolicShapeOpsPass.h",
+        "include/mlir-tcp/Dialect/Transforms/EliminateUnusedTorchOpsPass.h",
         "include/mlir-tcp/Dialect/Transforms/FuseTcpOpsPass.h",
         "include/mlir-tcp/Dialect/Transforms/FusionPatterns.h",
         "include/mlir-tcp/Dialect/Transforms/IsolateGroupOpsPass.h",
@@ -175,6 +177,7 @@ cc_library(
         "@llvm-project//mlir:TensorDialect",
         "@llvm-project//mlir:TensorTransforms",
         "@llvm-project//mlir:Transforms",
+        "@torch-mlir//:TorchMLIRTorchDialect",
     ],
 )
 
@@ -198,7 +201,6 @@ cc_library(
     hdrs = ["include/mlir-tcp/Conversion/Passes.h"],
     strip_include_prefix = "include",
     deps = [
-        ":StablehloToTcp",
         ":TcpToArith",
         ":TcpToLinalg",
         ":TcpToTensor",
@@ -234,25 +236,6 @@ cc_library(
         "@torch-mlir//:TorchMLIRTorchConversionDialect",
         "@torch-mlir//:TorchMLIRTorchPasses",
         "@torch-mlir//:TorchMLIRTorchToLinalg",
-    ],
-)
-
-cc_library(
-    name = "StablehloToTcp",
-    srcs = [
-        "lib/Conversion/PassDetail.h",
-        "lib/Conversion/StablehloToTcp/StablehloToTcp.cpp",
-    ],
-    hdrs = ["include/mlir-tcp/Conversion/StablehloToTcp/StablehloToTcp.h"],
-    strip_include_prefix = "include",
-    deps = [
-        ":TcpConversionPassesIncGen",
-        ":TcpDialect",
-        "@llvm-project//mlir:Dialect",
-        "@llvm-project//mlir:LinalgDialect",
-        "@llvm-project//mlir:Pass",
-        "@llvm-project//mlir:Transforms",
-        "@stablehlo//:stablehlo_ops",
     ],
 )
 
@@ -364,6 +347,5 @@ cc_binary(
         "@llvm-project//mlir:AllPassesAndDialects",
         "@llvm-project//mlir:MlirOptLib",
         "@llvm-project//mlir:QuantOps",
-        "@stablehlo//:register",
     ],
 )

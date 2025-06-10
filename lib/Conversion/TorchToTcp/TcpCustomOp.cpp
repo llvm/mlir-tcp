@@ -79,7 +79,7 @@ public:
                                                             getTypeConverter()};
     helper.addOperand("input", adaptor.getInput());
     helper.addOperand("weight", adaptor.getWeight());
-    if (!adaptor.getBias().getType().isa<Torch::NoneType>()) {
+    if (!isa<Torch::NoneType>(adaptor.getBias().getType())) {
       helper.addOperand("bias", adaptor.getBias());
     }
 
@@ -131,7 +131,7 @@ public:
     helper.addIntAttr("quant_max", op.getQuantMax());
 
     // scale
-    auto scaleTy = adaptor.getScale().getType().dyn_cast<RankedTensorType>();
+    auto scaleTy = dyn_cast<RankedTensorType>(adaptor.getScale().getType());
     if (!scaleTy || scaleTy.getShape().size() != 1 ||
         scaleTy.getNumElements() != 1)
       // scale should be a [1] tensor.
@@ -140,7 +140,7 @@ public:
 
     // zero_point
     auto zeroPointTy =
-        adaptor.getZeroPoint().getType().dyn_cast<RankedTensorType>();
+        dyn_cast<RankedTensorType>(adaptor.getZeroPoint().getType());
     if (!zeroPointTy || zeroPointTy.getShape().size() != 1 ||
         zeroPointTy.getNumElements() != scaleTy.getNumElements())
       // zero_point should be a [1] tensor.
@@ -168,7 +168,7 @@ public:
     helper.addIntAttr("quant_max", op.getQuantMax());
 
     // scale
-    auto scaleTy = adaptor.getScale().getType().dyn_cast<RankedTensorType>();
+    auto scaleTy = dyn_cast<RankedTensorType>(adaptor.getScale().getType());
     if (!scaleTy || scaleTy.getShape().size() != 1)
       // scale should be a [C] tensor.
       return rewriter.notifyMatchFailure(op, "Unsupported scale type or size");
@@ -176,7 +176,7 @@ public:
 
     // zero_point
     auto zeroPointTy =
-        adaptor.getZeroPoint().getType().dyn_cast<RankedTensorType>();
+        dyn_cast<RankedTensorType>(adaptor.getZeroPoint().getType());
     if (!zeroPointTy || zeroPointTy.getShape().size() != 1 ||
         zeroPointTy.getNumElements() != scaleTy.getNumElements())
       // zero_point should be a [C] tensor.
@@ -428,8 +428,7 @@ void torch_to_tcp::populateTcpCustomOpPatternsAndLegality(
   // Torch -> TOSA supports only 2D convolutions; map the rest to
   // TCP custom_op instead.
   auto is2dConvOp = [](AtenConvolutionOp op) {
-    auto inputTy =
-        op.getInput().getType().cast<torch::Torch::ValueTensorType>();
+    auto inputTy = cast<torch::Torch::ValueTensorType>(op.getInput().getType());
     return inputTy.getSizes().size() == 4;
   };
 

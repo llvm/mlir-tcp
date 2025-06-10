@@ -7,10 +7,8 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load(
     ":local_repos.bzl",
     "local_llvm_repo_path",
-    "local_stablehlo_repo_path",
     "local_torch_mlir_repo_path",
     "use_local_llvm_repo",
-    "use_local_stablehlo_repo",
     "use_local_torch_mlir_repo",
 )
 
@@ -22,8 +20,8 @@ def third_party_deps():
             path = local_llvm_repo_path(),
         )
     else:
-        LLVM_COMMIT = "72144d119a7291f8b6b8e022a2947fbe31e66afc"
-        LLVM_SHA256 = "2caacb6925a13cb5886a5d7f225fa408b80ca8e1efe0736186954b2abc4ee1c3"
+        LLVM_COMMIT = "b231e5ff504295641b0f580ceefa2e1048011614"
+        LLVM_SHA256 = "88dfa59052730710cb48fa20b00a4344144edd1c3cb524c06d983899835e491a"
         http_archive(
             name = "llvm-raw",
             build_file_content = "# empty",
@@ -39,32 +37,15 @@ def third_party_deps():
             path = local_torch_mlir_repo_path(),
         )
     else:
-        TORCH_MLIR_COMMIT = "9f2ba5abaa85cefd95cc85579fafd0c53c1101e8"
-        TORCH_MLIR_SHA256 = "09444281839eeae4aff42c029d87b1728f307fa26511b896ff448d51aaa98049"
+        TORCH_MLIR_COMMIT = "1ad9702d2a290b693c4f6f17921d0e0a8d14a999"
+        TORCH_MLIR_SHA256 = "8843399168c34ca3ca16d2417703fe4e1440ca7240d9e04844b3deedf256f0ab"
         http_archive(
             name = "torch-mlir-raw",
             build_file_content = "# empty",
+            patches = ["//third_party/patches:torch-mlir-bazel-build.1.patch", "//third_party/patches:torch-mlir-bazel-build.2.patch"],
             sha256 = TORCH_MLIR_SHA256,
             strip_prefix = "torch-mlir-" + TORCH_MLIR_COMMIT,
             urls = ["https://github.com/llvm/torch-mlir/archive/{commit}.tar.gz".format(commit = TORCH_MLIR_COMMIT)],
-            patches = [
-                "//third_party/patches:torch-mlir.1.patch",
-            ],
-        )
-
-    if use_local_stablehlo_repo():
-        native.local_repository(
-            name = "stablehlo",
-            path = local_stablehlo_repo_path(),
-        )
-    else:
-        STABLEHLO_COMMIT = "a54938f0651d3b4b7be9771848eda2463c92a8e7"
-        STABLEHLO_SHA256 = "edab2288f0b19e3efbf08815d17d4efb106984aa6fe02fed0cb2165284e6a5b7"
-        http_archive(
-            name = "stablehlo",
-            sha256 = STABLEHLO_SHA256,
-            strip_prefix = "stablehlo-" + STABLEHLO_COMMIT,
-            urls = ["https://github.com/openxla/stablehlo/archive/{commit}.tar.gz".format(commit = STABLEHLO_COMMIT)],
         )
 
     SKYLIB_VERSION = "1.3.0"

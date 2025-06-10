@@ -24,8 +24,8 @@ include "mlir-tcp/Dialect/IR/TcpBase.td"
 // Where low and high ends are 0,255 when unsigned, -128,127 when signed, for
 // the 8-bit case.
 class Tcp_QuantizedType<string n, list<int> params, bit signed>
-  : Type<And<[CPred<"$_self.isa<mlir::quant::QuantizedType>()">,
-              CPred<"$_self.cast<mlir::quant::QuantizedType>()" #
+  : Type<And<[CPred<"::llvm::isa<mlir::quant::QuantizedType>($_self)">,
+              CPred<"::llvm::cast<mlir::quant::QuantizedType>($_self)" #
                     ".getStorageTypeIntegralWidth() == " # !head(params)>]>,
     "Q" # !if (signed, "int", "uint") # !head(params) # " type"> {
   string name = n;
